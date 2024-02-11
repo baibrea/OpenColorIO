@@ -158,6 +158,40 @@ const char * FileTransform::GetFormatExtensionByIndex(int index)
     return FormatRegistry::GetInstance().getFormatExtensionByIndex(FORMAT_CAPABILITY_READ, index);
 }
 
+static bool FileTransform::IsFormatExtensionSupported(const char * ext) {
+
+    // ignore leading dots
+    if (ext[0] == '.') {
+        ext = ext.substr(1, ext.length() - 1);
+    }
+    // convert extension from char to str
+    std::string strExt = tolower(str(ext));
+
+    // check if extension is valid
+    for (unsigned int i = 0; i < m_readFormatExtensions.size(); i++) {
+        std::string currExt = tolower(m_readFormatExtensions[i]);
+        if (strExt == currExt) {
+            return true;
+        }
+    }
+
+    for (unsigned int j = 0; j < m_bakeFormatExtensions.size(); j++) {
+        std::string currExt = tolower(m_bakeFormatExtensions[j]);
+        if (strExt == currExt) {
+            return true;
+        }
+    }
+
+    for (unsigned int k = 0; k < m_writeFormatExtensions.size(); k++) {
+        std::string currExt = tolower(m_writeFormatExtensions[k]);
+        if (strExt == currExt) {
+            return true;
+        }
+    }
+    // if extension does not match any existing valid extension, return false
+    return false;
+}
+
 std::ostream& operator<< (std::ostream& os, const FileTransform& t)
 {
     os << "<FileTransform ";
